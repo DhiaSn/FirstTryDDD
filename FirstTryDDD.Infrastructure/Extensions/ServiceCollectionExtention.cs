@@ -1,7 +1,7 @@
 ﻿using FirstTryDDD.Core.AggregateModels.UserAggregate;
+using FirstTryDDD.SharedKernel.Enums; 
 using FirstTryDDD.Infrastructure.Data;
 using FirstTryDDD.Infrastructure.Data.Repositories;
-using FirstTryDDD.Infrastructure.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
