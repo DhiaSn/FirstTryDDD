@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using FirstTryDDD.API.Extentions; 
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +13,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using FirstTryDDD.Infrastructure.Extensions; 
 
 namespace FirstTryDDD
 {
@@ -36,7 +36,8 @@ namespace FirstTryDDD
             });
 
             services.AddDbContext(Configuration);
-            services.AddRepositories(); 
+            services.AddRepositories();
+            services.AddBusinessServices(); 
 
         }
 

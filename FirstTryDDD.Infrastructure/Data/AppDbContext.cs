@@ -16,5 +16,7 @@ namespace FirstTryDDD.Infrastructure.Data
         {
 
         }
+
+        public DbSet<FirstTryDDD.Core.AggregateModels.UserAggregate.User> ContractSubsciption { get; set; }
     }
 }

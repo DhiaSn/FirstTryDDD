@@ -19,6 +19,6 @@ namespace FirstTryDDD.SharedKernel.Enums
     /// </summary>
     public enum DbMode { None, Debug, Release }
 
-    public enum ResponseResult { None, Success, Exception }  
+    public enum ResponseResult { None, Success, Exception, Error }  
 
 }

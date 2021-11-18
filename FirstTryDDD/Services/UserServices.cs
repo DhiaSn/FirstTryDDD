@@ -1,0 +1,111 @@
+﻿using FirstTryDDD.API.DTOs.User;
+using FirstTryDDD.API.Extentions; 
+using FirstTryDDD.Core.AggregateModels.UserAggregate;
+using FirstTryDDD.SharedKernel.Enums;
+using FirstTryDDD.SharedKernel.Models;
+using FirstTryDDD.SharedKernel.Services;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FirstTryDDD.API.Services
+{
+    public class UserServices
+    {
+        #region Local Variable + Constructor
+        private readonly IUserRepository _repo;
+
+        public UserServices(IUserRepository repo)
+        {
+            _repo = repo;
+        }
+        #endregion
+
+        #region Main Methods 
+        #region GetAllAsync
+        public async Task<Response> GetAllAsync()
+        {
+            try
+            {
+                return new GlobalResponse { Result = ResponseResult.Success, Status = StatusCodes.Status200OK, Object = (await _repo.GetAllAsync()).ToResponseList() };
+            }
+            catch (Exception ex)
+            {
+                return new SimpleErrorResponse { Result = ResponseResult.Exception, Status = StatusCodes.Status500InternalServerError, MsgException = ex.Message };
+            }
+        }
+        #endregion
+
+        #region GetByIdAsync
+        public async Task<Response> GetByIdAsync(Guid id)
+        {
+            try
+            {
+                User user = await _repo.GetByIdAsync(id); 
+                if(user != null)
+                    return new GlobalResponse { Result = ResponseResult.Success, Status = StatusCodes.Status200OK, Object = new GetUserByIdResponse(user) };
+
+                return new SimpleErrorResponse { Result = ResponseResult.Error, Status = StatusCodes.Status404NotFound, MsgException = "Cannot find this user..." }; 
+            }
+            catch (Exception ex)
+            {
+                return new SimpleErrorResponse { Result = ResponseResult.Exception, Status = StatusCodes.Status500InternalServerError, MsgException = ex.Message };
+            }
+        }
+        #endregion
+
+        #region PostAsync
+        public async Task<Response> PostAsync(PostUserRequest user)
+        {
+            try
+            {
+                return new GlobalResponse { Result = ResponseResult.Success, Status = StatusCodes.Status201Created, Object = new PostUserResponse(await _repo.PostAsync(new User { Name = user.Name, Age = user.Age, PhoneNumber = user.PhoneNumber })) };
+            }
+            catch (Exception ex)
+            {
+                return new SimpleErrorResponse { Result = ResponseResult.Exception, Status = StatusCodes.Status500InternalServerError, MsgException = ex.Message };
+            }
+        }
+        #endregion
+
+        #region PutAsync
+        public async Task<Response> PutAsync(PutUserRequest newUser)
+        {
+            try
+            {
+                User user = await _repo.GetByIdAsync(newUser.Id);
+
+                user.Name = GenericServices<string>.IsDefaultValue(newUser.Name) ? user.Name : newUser.Name;
+                user.PhoneNumber = GenericServices<string>.IsDefaultValue(newUser.PhoneNumber) ? user.PhoneNumber : newUser.PhoneNumber;
+                user.Age = GenericServices<int>.IsDefaultValue(newUser.Age) ? user.Age : newUser.Age; 
+
+                return new GlobalResponse { Result = ResponseResult.Success, Status = StatusCodes.Status200OK, Object = new PutUserResponse(await _repo.PutAsync(user)) };
+            }
+            catch (Exception ex)
+            {
+                return new SimpleErrorResponse { Result = ResponseResult.Exception, Status = StatusCodes.Status500InternalServerError, MsgException = ex.Message };
+            }
+        }
+        #endregion
+
+        #region Delete
+        public async Task<Response> DeleteAsync(Guid id)
+        {
+            try
+            {
+                await _repo.DeleteAsync(id); 
+
+                return new Response { Result = ResponseResult.Success, Status = StatusCodes.Status200OK};
+            }
+            catch (Exception ex)
+            {
+                return new SimpleErrorResponse { Result = ResponseResult.Exception, Status = StatusCodes.Status500InternalServerError, MsgException = ex.Message };
+            }
+        }
+        #endregion
+        #endregion
+
+    }
+}

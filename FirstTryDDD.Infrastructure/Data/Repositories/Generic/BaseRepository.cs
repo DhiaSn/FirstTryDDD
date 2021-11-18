@@ -44,11 +44,19 @@ namespace FirstTryDDD.Infrastructure.Data.Repositories.Generic
         #endregion
 
         #region PutAsync
-        public async Task<T> PutAsync(Guid id, T entity)
+        public async Task<T> PutAsync(T entity)
         {
             entity.UpdatedDate = DateTime.Now;
             _dbContext.Entry(entity).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex )
+            {
+                 
+            }
 
             return await GetByIdAsync(entity.Id);
         }
