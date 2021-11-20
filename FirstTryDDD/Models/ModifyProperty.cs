@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FirstTryDDD.API.DTOs
+namespace FirstTryDDD.API.Models
 {
     public class ModifyProperty
     {

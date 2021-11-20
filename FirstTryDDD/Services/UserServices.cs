@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FirstTryDDD.API.Services
 {
-    public class UserServices
+    public class UserServices : BaseServices
     {
         #region Local Variable + Constructor
         private readonly IUserRepository _repo;
@@ -25,7 +25,7 @@ namespace FirstTryDDD.API.Services
 
         #region Main Methods 
         #region GetAllAsync
-        public async Task<Response> GetAllAsync()
+        public override async Task<Response> GetAllAsync()
         {
             try
             {
@@ -39,7 +39,7 @@ namespace FirstTryDDD.API.Services
         #endregion
 
         #region GetByIdAsync
-        public async Task<Response> GetByIdAsync(Guid id)
+        public override async Task<Response> GetByIdAsync(Guid id)
         {
             try
             {
@@ -57,10 +57,11 @@ namespace FirstTryDDD.API.Services
         #endregion
 
         #region PostAsync
-        public async Task<Response> PostAsync(PostUserRequest user)
+        public override async Task<Response> PostAsync(dynamic model)
         {
             try
             {
+                PostUserRequest user = (PostUserRequest)model; 
                 return new GlobalResponse { Result = ResponseResult.Success, Status = StatusCodes.Status201Created, Object = new PostUserResponse(await _repo.PostAsync(new User { Name = user.Name, Age = user.Age, PhoneNumber = user.PhoneNumber })) };
             }
             catch (Exception ex)
@@ -71,10 +72,11 @@ namespace FirstTryDDD.API.Services
         #endregion
 
         #region PutAsync
-        public async Task<Response> PutAsync(PutUserRequest newUser)
+        public override async Task<Response> PutAsync(dynamic newModel)
         {
             try
             {
+                PutUserRequest newUser = (PutUserRequest)newModel; 
                 User user = await _repo.GetByIdAsync(newUser.Id);
 
                 user.Name = GenericServices<string>.IsDefaultValue(newUser.Name) ? user.Name : newUser.Name;
@@ -91,7 +93,7 @@ namespace FirstTryDDD.API.Services
         #endregion
 
         #region Delete
-        public async Task<Response> DeleteAsync(Guid id)
+        public override async Task<Response> DeleteAsync(Guid id)
         {
             try
             {

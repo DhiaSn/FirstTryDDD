@@ -1,4 +1,5 @@
 ﻿using FirstTryDDD.Core.Interfaces;
+using FirstTryDDD.Core.Services;
 using FirstTryDDD.Infrastructure.Data;
 using FirstTryDDD.SharedKernel;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace FirstTryDDD.Infrastructure.Data.Repositories.Generic
 {
     public class GlobalRepository<T> : BaseRepository<T>, IGlobalRepository<T> where T : BaseEntity
     {
+        #region Local Variable + Constructor
         private readonly AppDbContext _dbContext;
         private DbSet<T> _context;
         public GlobalRepository(AppDbContext context) : base(context)
@@ -20,6 +22,9 @@ namespace FirstTryDDD.Infrastructure.Data.Repositories.Generic
             _dbContext = context;
             _context = _dbContext.Set<T>();
         }
+        #endregion
+
+        public async Task<PaginatedListService<T>> GetPaginatedList(int pageNumber, int pageSize) => PaginatedListService<T>.Create(_context.AsNoTracking(), await _context.CountAsync(), pageNumber, pageSize);
 
         public async Task DeleteRangeAsync(IEnumerable<T> entities)
         {

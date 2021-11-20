@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FirstTryDDD.API.Services;
+using FirstTryDDD.Core.AggregateModels.CarAggregate;
 
 namespace FirstTryDDD.API.Extentions
 {
@@ -17,11 +18,12 @@ namespace FirstTryDDD.API.Extentions
         }
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            return services.AddScoped<IUserRepository, UserRepository>();
+            return services.AddScoped<IUserRepository, UserRepository>()
+                           .AddScoped<ICarRepository, CarRepository>();
         }
         public static IServiceCollection AddBusinessServices(this IServiceCollection services )
         {
-            return services.AddScoped<UserServices>();
+            return services.AddScoped<UserServices>(); 
         }
     }
 }

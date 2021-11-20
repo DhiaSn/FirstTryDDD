@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FirstTryDDD.API.DTOs.User
 {
-    public class PutUserRequest
+    public class PutUserRequest 
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

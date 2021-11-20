@@ -13,6 +13,11 @@ namespace FirstTryDDD.SharedKernel.Models
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ResponseResult Result { get; set; }
         public StatusCode Status { get; set; }
+
+        public static implicit operator Response(FirstTryDDD.Core.Services.PaginatedListService<object> v)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class GlobalResponse: Response
     {
