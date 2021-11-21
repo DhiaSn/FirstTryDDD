@@ -31,6 +31,11 @@ namespace FirstTryDDD.API.Controllers.GenericControllers
             {
 
                 Response res = await _services.GetPaginatedList(model.PageNumber, model.PageSize);
+
+                if (res.Result == SharedKernel.Enums.ResponseResult.Success)
+                    return Ok(res);
+
+                return StatusCode(500, res);
             }
 
             return NoContent(); 

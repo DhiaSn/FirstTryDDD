@@ -1,5 +1,6 @@
 ﻿using FirstTryDDD.API.DTOs.User;
-using FirstTryDDD.API.Extentions; 
+using FirstTryDDD.API.Extentions;
+using FirstTryDDD.API.Services.AbstractServices;
 using FirstTryDDD.Core.AggregateModels.UserAggregate;
 using FirstTryDDD.SharedKernel.Enums;
 using FirstTryDDD.SharedKernel.Models;
@@ -29,7 +30,7 @@ namespace FirstTryDDD.API.Services
         {
             try
             {
-                return new GlobalResponse { Result = ResponseResult.Success, Status = StatusCodes.Status200OK, Object = (await _repo.GetAllAsync()).ToResponseList() };
+                return new GlobalResponse { Result = ResponseResult.Success, Status = StatusCodes.Status200OK, Object = (await _repo.GetAllAsync()).ToCastedList(u => new GetUsersResponse(u.Id, u.Name, u.Age)) };
             }
             catch (Exception ex)
             {

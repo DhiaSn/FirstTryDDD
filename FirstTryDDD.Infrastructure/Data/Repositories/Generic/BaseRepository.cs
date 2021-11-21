@@ -35,7 +35,9 @@ namespace FirstTryDDD.Infrastructure.Data.Repositories.Generic
         #region PostAsync
         public async Task<T> PostAsync(T entity)
         {
-            entity.CreatedDate = DateTime.Now;
+            DateTime date = DateTime.Now;   
+            entity.CreatedDate = date;
+            entity.UpdatedDate = date;
             _context.Add(entity);
             await _dbContext.SaveChangesAsync();
 
