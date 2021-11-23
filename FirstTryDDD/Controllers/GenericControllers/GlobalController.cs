@@ -39,7 +39,7 @@ namespace FirstTryDDD.API.Controllers.GenericControllers
                 return StatusCode(500, res);
             }
 
-            return NoContent();
+            return BadRequest("Null or Empty Entity!");
         }
         #endregion
 
@@ -56,9 +56,9 @@ namespace FirstTryDDD.API.Controllers.GenericControllers
                     case SharedKernel.Enums.ResponseResult.Success:
                         return Ok(res);
                     case SharedKernel.Enums.ResponseResult.Error:
-                        return StatusCode(500, res);
+                        return BadRequest(res);
                     case SharedKernel.Enums.ResponseResult.Exception:
-                        return BadRequest(res); 
+                        return StatusCode(500, res);
                 }
 
                 return StatusCode(500, res);

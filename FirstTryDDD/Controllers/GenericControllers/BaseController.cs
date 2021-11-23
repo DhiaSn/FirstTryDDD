@@ -34,8 +34,13 @@ namespace FirstTryDDD.API.Controllers.GenericControllers
         {
             Response res = await _services.GetAllAsync();
 
-            if (res.Result == SharedKernel.Enums.ResponseResult.Success)
-                return Ok(res);
+            switch(res.Result)
+            {
+                case SharedKernel.Enums.ResponseResult.Success:
+                    return Ok(res);
+                case SharedKernel.Enums.ResponseResult.Error:
+                    return BadRequest(res); 
+            }
 
             return StatusCode(500, res);
         }
@@ -45,7 +50,6 @@ namespace FirstTryDDD.API.Controllers.GenericControllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-
             if (id != default)
             {
                 try
@@ -65,8 +69,7 @@ namespace FirstTryDDD.API.Controllers.GenericControllers
                 }
             }
 
-            return NotFound();
-
+            return BadRequest("Incorrect Id Value");
         }
 
         #endregion
@@ -93,7 +96,7 @@ namespace FirstTryDDD.API.Controllers.GenericControllers
 
             }
 
-            return NotFound();
+            return BadRequest("Incorrect Id Value");
         }
         #endregion
 
@@ -117,40 +120,43 @@ namespace FirstTryDDD.API.Controllers.GenericControllers
                 }
             }
 
-            return NoContent();
+            return BadRequest("Null or Empty!");
         }
         #endregion
 
         #region PutBaseAsync
         protected async Task<IActionResult> PutBaseAsync(Guid id, dynamic model)
         {
-            if (id == default)
-                return NotFound();
-
-            if (model.Id != id)
-                return BadRequest("Object id doesn't match...");
-
-            try
+            if(model != null)
             {
-                Response res = await _services.PutAsync(model);
+                if (id == default)
+                    return BadRequest("Incorrect Id Value");
 
-                switch(res.Result)
+                if (model.Id != id)
+                    return BadRequest("Object id doesn't match...");
+
+                try
                 {
-                    case SharedKernel.Enums.ResponseResult.Success:
-                        return Ok(res);
-                    case SharedKernel.Enums.ResponseResult.Error:
-                        return BadRequest(res);
-                    case SharedKernel.Enums.ResponseResult.Exception:
-                        return StatusCode(500, res);
-                }
-                    
-                return StatusCode(500, res);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new SimpleErrorResponse { Status = SCodes.Status400BadRequest, Result = SharedKernel.Enums.ResponseResult.Exception, MsgException = ex.Message });
-            }
+                    Response res = await _services.PutAsync(model);
 
+                    switch (res.Result)
+                    {
+                        case SharedKernel.Enums.ResponseResult.Success:
+                            return Ok(res);
+                        case SharedKernel.Enums.ResponseResult.Error:
+                            return BadRequest(res);
+                        case SharedKernel.Enums.ResponseResult.Exception:
+                            return StatusCode(500, res);
+                    }
+
+                    return StatusCode(500, res);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new SimpleErrorResponse { Status = SCodes.Status400BadRequest, Result = SharedKernel.Enums.ResponseResult.Exception, MsgException = ex.Message });
+                }
+            }
+            return BadRequest("Null or Empty Entity!");
         }
 
         #endregion

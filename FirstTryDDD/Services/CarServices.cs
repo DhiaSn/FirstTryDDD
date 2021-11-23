@@ -114,7 +114,7 @@ namespace FirstTryDDD.API.Services
             }
             catch (Exception ex)
             {
-                return new SimpleErrorResponse { Result = ResponseResult.Error, Status = StatusCodes.Status500InternalServerError, MsgException = ex.Message };
+                return new SimpleErrorResponse { Result = ResponseResult.Exception, Status = StatusCodes.Status500InternalServerError, MsgException = ex.Message };
             }
         }
         #endregion
