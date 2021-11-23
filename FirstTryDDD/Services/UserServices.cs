@@ -80,11 +80,15 @@ namespace FirstTryDDD.API.Services
                 PutUserRequest newUser = (PutUserRequest)newModel; 
                 User user = await _repo.GetByIdAsync(newUser.Id);
 
-                user.Name = GenericServices<string>.IsDefaultValue(newUser.Name) ? user.Name : newUser.Name;
-                user.PhoneNumber = GenericServices<string>.IsDefaultValue(newUser.PhoneNumber) ? user.PhoneNumber : newUser.PhoneNumber;
-                user.Age = GenericServices<int>.IsDefaultValue(newUser.Age) ? user.Age : newUser.Age; 
+                if(user != null)
+                {
+                    user.Name = GenericServices<string>.IsDefaultValue(newUser.Name) ? user.Name : newUser.Name;
+                    user.PhoneNumber = GenericServices<string>.IsDefaultValue(newUser.PhoneNumber) ? user.PhoneNumber : newUser.PhoneNumber;
+                    user.Age = GenericServices<int>.IsDefaultValue(newUser.Age) ? user.Age : newUser.Age;
 
-                return new GlobalResponse { Result = ResponseResult.Success, Status = StatusCodes.Status200OK, Object = new PutUserResponse(await _repo.PutAsync(user)) };
+                    return new GlobalResponse { Result = ResponseResult.Success, Status = StatusCodes.Status200OK, Object = new PutUserResponse(await _repo.PutAsync(user)) };
+                }
+                return new Response { Result = ResponseResult.Error, Status = new StatusCode { Code = StatusCodes.Status400BadRequest.Code, Message = "Cannot find the target user..." } }; 
             }
             catch (Exception ex)
             {
@@ -100,7 +104,7 @@ namespace FirstTryDDD.API.Services
             {
                 await _repo.DeleteAsync(id); 
 
-                return new Response { Result = ResponseResult.Success, Status = StatusCodes.Status200OK};
+                return new Response { Result = ResponseResult.Success, Status = { Code = StatusCodes.Status200OK.Code, Message = "Removed successfully" } };
             }
             catch (Exception ex)
             {

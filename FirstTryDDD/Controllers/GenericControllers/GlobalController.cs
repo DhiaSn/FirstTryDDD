@@ -24,10 +24,11 @@ namespace FirstTryDDD.API.Controllers.GenericControllers
         }
         #endregion
 
+        #region GetPaginated
         [HttpGet("Paginated")]
         public async Task<IActionResult> GetPaginated([FromQuery] PaginationFilter model)
         {
-            if(model != null)
+            if (model != null)
             {
 
                 Response res = await _services.GetPaginatedList(model.PageNumber, model.PageSize);
@@ -38,8 +39,54 @@ namespace FirstTryDDD.API.Controllers.GenericControllers
                 return StatusCode(500, res);
             }
 
-            return NoContent(); 
+            return NoContent();
         }
+        #endregion
+
+        #region PostRangeAsync 
+        protected async Task<IActionResult> PostRangeAsync(IEnumerable<object> entities) 
+        {
+
+            if(entities != null && entities.Count()> 0)
+            {
+                Response res = await _services.PostRangeAsync(entities); 
+
+                switch(res.Result)
+                {
+                    case SharedKernel.Enums.ResponseResult.Success:
+                        return Ok(res);
+                    case SharedKernel.Enums.ResponseResult.Error:
+                        return StatusCode(500, res);
+                    case SharedKernel.Enums.ResponseResult.Exception:
+                        return BadRequest(res); 
+                }
+
+                return StatusCode(500, res);
+            }
+
+            return BadRequest("Null or empty List..."); 
+        }
+        #endregion
+
+
+        #region DeleteRangeAsync 
+        protected async Task<IActionResult> DeleteRangeAsync(IEnumerable<object> entities)
+        { 
+            if (entities != null && entities.Count() > 0)
+            {
+                Response res = await _services.DeleteRangeAsync(entities);
+
+                if (res.Result == SharedKernel.Enums.ResponseResult.Success)
+                    return Ok(res);
+
+                return StatusCode(500, res);
+            }
+
+            return BadRequest("Null or empty List...");
+        }
+        #endregion
+
+
 
     }
 }

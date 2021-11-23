@@ -128,16 +128,23 @@ namespace FirstTryDDD.API.Controllers.GenericControllers
                 return NotFound();
 
             if (model.Id != id)
-                return BadRequest();
+                return BadRequest("Object id doesn't match...");
 
             try
             {
                 Response res = await _services.PutAsync(model);
 
-                if (res.Result == SharedKernel.Enums.ResponseResult.Success)
-                    return Ok(res);
-                else
-                    return StatusCode(500, res);
+                switch(res.Result)
+                {
+                    case SharedKernel.Enums.ResponseResult.Success:
+                        return Ok(res);
+                    case SharedKernel.Enums.ResponseResult.Error:
+                        return BadRequest(res);
+                    case SharedKernel.Enums.ResponseResult.Exception:
+                        return StatusCode(500, res);
+                }
+                    
+                return StatusCode(500, res);
             }
             catch (Exception ex)
             {

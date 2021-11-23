@@ -93,7 +93,7 @@ namespace FirstTryDDD.API.Services
         {
             try
             {
-                PostRangeCarsResponse carsRes = new PostRangeCarsResponse();
+                PostRangeCarsResponse carsRes = new PostRangeCarsResponse() { CreatedCars = new List<PostCarResponse>(), UncreatedCars = new List<UncreatedCarsResponse>() }; 
 
                 foreach (var item in (IEnumerable<PostCarRequest>)entities)
                 {
@@ -114,7 +114,7 @@ namespace FirstTryDDD.API.Services
             }
             catch (Exception ex)
             {
-                return new SimpleErrorResponse { Result = ResponseResult.Exception, Status = StatusCodes.Status500InternalServerError, MsgException = ex.Message };
+                return new SimpleErrorResponse { Result = ResponseResult.Error, Status = StatusCodes.Status500InternalServerError, MsgException = ex.Message };
             }
         }
         #endregion
@@ -127,10 +127,16 @@ namespace FirstTryDDD.API.Services
                 PutCarRequest newCar = (PutCarRequest)newModel;
                 Car car = await _repo.GetByIdAsync(newCar.Id);
 
-                car.Brand = GenericServices<string>.IsDefaultValue(newCar.Brand) ? car.Brand : newCar.Brand;
-                car.Ref = GenericServices<string>.IsDefaultValue(newCar.Ref) ? car.Ref : newCar.Ref;
+                if(car != null)
+                {
+                    car.Brand = GenericServices<string>.IsDefaultValue(newCar.Brand) ? car.Brand : newCar.Brand;
+                    car.Ref = GenericServices<string>.IsDefaultValue(newCar.Ref) ? car.Ref : newCar.Ref;
 
-                return new GlobalResponse { Result = ResponseResult.Success, Status = StatusCodes.Status200OK, Object = new PutCarResponse(await _repo.PutAsync(car)) };
+                    return new GlobalResponse { Result = ResponseResult.Success, Status = StatusCodes.Status200OK, Object = new PutCarResponse(await _repo.PutAsync(car)) };
+                }
+                
+                return new Response { Result = ResponseResult.Error, Status = new StatusCode { Code = StatusCodes.Status400BadRequest.Code, Message = "Cannot find the target car..." } };
+               
             }
             catch (Exception ex)
             {
@@ -147,7 +153,7 @@ namespace FirstTryDDD.API.Services
                 await _repo.DeleteAsync(id);
 
 
-                return new Response { Result = ResponseResult.Success, Status = StatusCodes.Status200OK };
+                return new Response { Result = ResponseResult.Success, Status = { Code = StatusCodes.Status200OK.Code, Message = "Removed Successfully!" } };
             }
             catch (Exception ex)
             {
@@ -162,21 +168,19 @@ namespace FirstTryDDD.API.Services
 
             try
             {
-                DeleteRangeCarsResponse carsRes = new DeleteRangeCarsResponse(); 
+                DeleteRangeCarsResponse carsRes = new DeleteRangeCarsResponse() { UnDeletedCars = new List<UnDeletedCarsResponse>() }; 
 
                 foreach (var item in (IEnumerable<DeleteCar>)entities)
                 {
                     Response res = await DeleteAsync(item.Id);
 
-                    switch (res.Result)
-                    { 
-                        case ResponseResult.Exception: 
-                            carsRes.UnDeletedCars.Add(new UnDeletedCarsResponse(item, (SimpleErrorResponse)res));
-                            break;
-                    }
+
+                    if(res.Result == ResponseResult.Exception)
+                        carsRes.UnDeletedCars.Add(new UnDeletedCarsResponse(item, (SimpleErrorResponse)res));
+
                 }
 
-                return new GlobalResponse { Result = ResponseResult.Success, Status = StatusCodes.Status201Created, Object = carsRes };
+                return new GlobalResponse { Result = ResponseResult.Success, Status = new StatusCode { Code = StatusCodes.Status201Created.Code, Message = "Removed Successfully!" }, Object = carsRes };
             }
             catch (Exception ex)
             {
