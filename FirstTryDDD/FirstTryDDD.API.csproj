@@ -16,13 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="DTOs\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FirstTryDDD.Infrastructure\FirstTryDDD.Infrastructure.csproj" />
   </ItemGroup>
 
