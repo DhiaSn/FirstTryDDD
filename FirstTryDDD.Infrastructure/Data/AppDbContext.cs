@@ -15,6 +15,9 @@ namespace FirstTryDDD.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Author>().HasIndex(a => a.PhoneNumber).IsUnique(); 
+            modelBuilder.Entity<Author>().HasIndex(a => a.Email).IsUnique(); 
+            modelBuilder.Entity<Reader>().HasIndex(a => a.Email).IsUnique(); 
+            modelBuilder.Entity<Reader>().HasIndex(a => a.UserName).IsUnique(); 
 
             modelBuilder.Entity<Author>().HasMany(a => a.Books).WithOne(b => b.Author).HasForeignKey(b => b.AuthorId).OnDelete(DeleteBehavior.Cascade);
 
